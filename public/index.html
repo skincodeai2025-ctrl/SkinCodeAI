@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SkincodeIA - Bienvenido</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    .hero { background: linear-gradient(135deg,#0f172a,#1f2937); color:#fff; padding:72px 0; }
+    .section-title { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    .gallery .card-img-top { height: 180px; object-fit: cover; }
+    .footer-modern { color:#d1d5db; background: linear-gradient(180deg, #2c3e50 0%, #34495e 100%); }
+    .footer-modern a { color:#c7d2fe; text-decoration: none; }
+    .footer-modern a:hover { color:#fff; }
+    .footer-divider { border-color: rgba(255,255,255,.12)!important; }
+    .footer-brand { color:#60a5fa; font-size: 1.25rem; font-weight: 600; }
+    .footer-modern h6 { font-size: .875rem; font-weight: 600; letter-spacing: .05em; margin-bottom: .75rem; color:#93c5fd; }
+    .footer-modern ul li { margin-bottom: .35rem; font-size: .875rem; }
+    .footer-modern .social-icons a { width: 36px; height: 36px; display: inline-flex; align-items: center; justify-content: center; border-radius: 50%; background: rgba(255,255,255,.08); transition: all .2s; }
+    .footer-modern .social-icons a:hover { background: rgba(255,255,255,.15); transform: translateY(-2px); }
+  </style>
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container">
+      <a class="navbar-brand" href="index.html">SkinCodeAI CRM</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="mainNav">
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+          <li class="nav-item"><a class="nav-link active" href="#inicio">Inicio</a></li>
+          <li class="nav-item"><a class="nav-link" href="#tatuajes">Tatuajes</a></li>
+          <li class="nav-item"><a class="nav-link" href="#piercings">Piercings</a></li>
+          <li class="nav-item"><a class="nav-link" href="#eventos">Eventos</a></li>
+          <li class="nav-item"><a class="nav-link" href="tatuadores.html">Artistas</a></li>
+          <li class="nav-item"><a class="nav-link" href="citas.html">Citas</a></li>
+          <li class="nav-item"><a class="btn btn-outline-light ms-lg-2" href="login.html">Entrar</a></li>
+          <li class="nav-item"><a class="btn btn-primary ms-lg-2" href="registro.html">Registrarme</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <header id="inicio" class="hero">
+    <div class="container text-center">
+      <h1 class="display-5 fw-semibold">Bienvenido a nuestra plataforma</h1>
+      <p class="lead mt-2 mb-4">Explora nuestro arte, conoce a los artistas y entérate de próximos eventos antes de registrarte.</p>
+      <div>
+        <a href="#tatuajes" class="btn btn-primary btn-lg me-2">Ver tatuajes</a>
+        <a href="#piercings" class="btn btn-outline-light btn-lg">Ver piercings</a>
+      </div>
+    </div>
+
+  </header>
+
+  <main class="container my-5">
+    <section id="tatuajes" class="mb-5">
+      <div class="section-title">
+        <h3 class="mb-0">Galería de Tatuajes</h3>
+        <a href="tatuadores.html" class="btn btn-sm btn-outline-secondary">Conocer artistas</a>
+      </div>
+      <div class="row gallery g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100">
+            <img class="card-img-top" src="img/categorias.png" alt="Tatuaje temático">
+            <div class="card-body">
+              <h5 class="card-title">Categorias</h5>
+              <p class="card-text text-muted">Diseños únicos y personalizados.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100">
+            <img class="card-img-top" src="" alt="Tatuaje 2">
+            <div class="card-body">
+              <h5 class="card-title">Formas</h5>
+              <p class="card-text text-muted">Sombras y detalles hiperrealistas.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100">
+            <img class="card-img-top" src="" alt="Tatuaje 3">
+            <div class="card-body">
+              <h5 class="card-title">Tematicas</h5>
+              <p class="card-text text-muted">Color y contornos clásicos.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="piercings" class="mb-5">
+      <div class="section-title">
+        <h3 class="mb-0">Galería de Piercings</h3>
+        <a href="#eventos" class="btn btn-sm btn-outline-secondary">Ver eventos</a>
+      </div>
+      <div class="row gallery g-3">
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100">
+            <img class="card-img-top" src="https://images.unsplash.com/photo-1629058622208-897896135c40?q=80&w=1200&auto=format&fit=crop" alt="Piercing 1">
+            <div class="card-body">
+              <h5 class="card-title">Lóbulo y hélix</h5>
+              <p class="card-text text-muted">Combinaciones elegantes.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100">
+            <img class="card-img-top" src="https://images.unsplash.com/photo-1542577084-eee34d268b9a?q=80&w=1200&auto=format&fit=crop" alt="Piercing 2">
+            <div class="card-body">
+              <h5 class="card-title">Septum</h5>
+              <p class="card-text text-muted">Estilo y personalidad.</p>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-md-6 col-lg-4">
+          <div class="card h-100">
+            <img class="card-img-top" src="https://images.unsplash.com/photo-1561854762-640d16d6fea8?q=80&w=1200&auto=format&fit=crop" alt="Piercing 3">
+            <div class="card-body">
+              <h5 class="card-title">Industrial</h5>
+              <p class="card-text text-muted">Composición de barra doble.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="eventos" class="mb-5">
+      <div class="section-title">
+        <h3 class="mb-0">Eventos y Workshops</h3>
+        <a href="citas.html" class="btn btn-sm btn-outline-secondary">Agendar cita</a>
+      </div>
+      <div class="row g-3">
+        <div class="col-12 col-lg-6">
+          <div class="card h-100">
+            <div class="row g-0">
+              <div class="col-md-5">
+                <img src="https://images.unsplash.com/photo-1551727974-8af20a3322e6?q=80&w=1200&auto=format&fit=crop" class="w-100 h-100" style="object-fit:cover" alt="Convención">
+              </div>
+              <div class="col-md-7">
+                <div class="card-body">
+                  <h5 class="card-title">Convención anual</h5>
+                  <p class="card-text text-muted">Artistas invitados, promociones y música en vivo.</p>
+                  <a href="login.html" class="btn btn-primary btn-sm">Participar</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-12 col-lg-6">
+          <div class="card h-100">
+            <div class="row g-0">
+              <div class="col-md-5">
+                <img src="img/FOTOEDWARD.jpg" class="w-100 h-100" style="object-fit:cover" alt="Workshop">
+              </div>
+              <div class="col-md-7">
+                <div class="card-body">
+                  <h5 class="card-title">Workshop de cuidados</h5>
+                  <p class="card-text text-muted">Aprende sobre higiene y cuidados post-procedimiento.</p>
+                  <a href="login.html" class="btn btn-outline-primary btn-sm">Inscribirme</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer-modern py-4 mt-5">
+    <div class="container">
+      <div class="row g-3 align-items-start">
+        <div class="col-12 col-lg-3">
+          <div class="footer-brand mb-2"><i class="bi bi-graph-up-arrow me-2"></i>CRM SKINCODEIA</div>
+          <p class="small mb-3" style="max-width: 28ch; line-height: 1.5;">Gestiona tus clientes, tatuadores y finanzas de manera eficiente con nuestro sistema integral de gestión de relaciones con clientes.</p>
+          <div class="social-icons d-flex gap-2">
+            <a href="#" aria-label="Facebook"><i class="bi bi-facebook"></i></a>
+            <a href="#" aria-label="Twitter"><i class="bi bi-twitter"></i></a>
+            <a href="#" aria-label="LinkedIn"><i class="bi bi-linkedin"></i></a>
+            <a href="#" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          </div>
+        </div>
+
+        <div class="col-6 col-lg-3">
+          <h6 class="text-uppercase">ENLACES RÁPIDOS</h6>
+          <ul class="list-unstyled mb-0">
+            <li><a href="index.html"><i class="bi bi-house-door me-2"></i>Inicio</a></li>
+            <li><a href="#"><i class="bi bi-people me-2"></i>Quienes Somos</a></li>
+            <li><a href="clientes.html"><i class="bi bi-person-lines-fill me-2"></i>Clientes</a></li>
+            <li><a href="tatuadores.html"><i class="bi bi-brush me-2"></i>Tatuadores</a></li>
+            <li><a href="#"><i class="bi bi-envelope me-2"></i>Contactos</a></li>
+          </ul>
+        </div>
+
+        <div class="col-6 col-lg-3">
+          <h6 class="text-uppercase">SERVICIOS</h6>
+          <ul class="list-unstyled mb-0">
+            <li><a href="#"><i class="bi bi-images me-2"></i>Galería</a></li>
+            <li><a href="#"><i class="bi bi-card-list me-2"></i>Catálogo</a></li>
+            <li><a href="citas.html"><i class="bi bi-calendar-check me-2"></i>Citas</a></li>
+            <li><a href="pagos.html"><i class="bi bi-file-earmark-text me-2"></i>Reportes</a></li>
+            <li><a href="#"><i class="bi bi-receipt me-2"></i>Facturación</a></li>
+          </ul>
+        </div>
+
+        <div class="col-12 col-lg-3">
+          <h6 class="text-uppercase">INFORMACIÓN DE CONTACTO</h6>
+          <ul class="list-unstyled mb-0 small">
+            <li class="mb-2">
+              <div class="fw-semibold"><i class="bi bi-geo-alt me-2"></i>Dirección:</div>
+              <div class="ms-4">Zona América</div>
+            </li>
+            <li class="mb-2">
+              <div class="fw-semibold"><i class="bi bi-telephone me-2"></i>Teléfono:</div>
+              <div class="ms-4">3152858236</div>
+            </li>
+            <li class="mb-2">
+              <div class="fw-semibold"><i class="bi bi-envelope me-2"></i>Correo:</div>
+              <div class="ms-4"><a href="mailto:soporte@skincodeia.co">soporte@skincodeia.co</a></div>
+            </li>
+            <li class="mb-2">
+              <div class="fw-semibold"><i class="bi bi-clock me-2"></i>Horarios:</div>
+              <div class="ms-4">Lun - Vie: 9:00 AM - 6:00 PM</div>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <hr class="footer-divider my-3">
+      <div class="d-flex flex-column flex-md-row justify-content-between align-items-center">
+        <div class="small">© 2024 CRM SKINCODEIA. Todos los derechos reservados.</div>
+        <div class="d-flex gap-3 small">
+          <a href="#">Políticas de Privacidad</a>
+          <span>|</span>
+          <a href="#">Términos y Condiciones</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

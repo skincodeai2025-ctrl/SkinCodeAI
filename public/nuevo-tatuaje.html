@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Solicitar Nuevo Tatuaje - Tattoo CRM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+  <nav class="navbar navbar-dark bg-dark mb-4">
+    <div class="container">
+      <a class="navbar-brand" href="dashboard.html">Tattoo CRM</a>
+      <button class="btn btn-outline-light btn-sm" onclick="logout()">Salir</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h2>Solicitar nuevo tatuaje</h2>
+    <form id="solicitudForm" class="row g-3">
+      <div class="col-md-6">
+        <label class="form-label">Ubicación en el cuerpo</label>
+        <input type="text" class="form-control" id="ubicacion_cuerpo" placeholder="Ej: antebrazo izquierdo">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Categoría del estilo</label>
+        <select class="form-select" id="categoria">
+          <option value="ninguno">Ninguno (no sé el estilo)</option>
+          <option value="realista">Realista</option>
+          <option value="geométrico">Geométrico</option>
+          <option value="tribal">Tribal</option>
+          <option value="japonés">Japonés</option>
+          <option value="blackwork">Blackwork</option>
+          <option value="acuarela">Acuarela</option>
+          <option value="old school">Old School</option>
+          <option value="new school">New School</option>
+          <option value="minimalista">Minimalista</option>
+          <option value="lettering">Lettering</option>
+          <option value="otros">Otros</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <label class="form-label">Descripción de la idea</label>
+        <textarea class="form-control" id="descripcion" rows="3" placeholder="Describe tu idea, símbolo, frase, etc."></textarea>
+      </div>
+      <div class="col-12">
+        <label class="form-label">URL de referencia (opcional)</label>
+        <input type="url" class="form-control" id="url_referencia" placeholder="https://ejemplo.com/referencia.jpg">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Servicio estimado (opcional)</label>
+        <select class="form-select" id="id_servicio">
+          <option value="">No lo sé aún</option>
+          <!-- Se cargarán dinámicamente -->
+        </select>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label">Elegir tatuador (opcional)</label>
+        <select class="form-select" id="id_tatuador">
+          <option value="id_tatuador">No lo sé aún</option>
+          <!-- Se cargarán dinámicamente -->
+        </select>
+      </div>
+      <div class="col-12">
+        <button type="submit" class="btn btn-success">Enviar solicitud</button>
+        <a href="dashboard.html" class="btn btn-secondary">Cancelar</a>
+      </div>
+    </form>
+
+    <!-- Lista de solicitudes pendientes -->
+    <hr class="my-5">
+    <h3>Mis solicitudes de tatuajes</h3>
+    <div id="listaSolicitudes" class="row">
+      <div class="text-center">
+        <p>Cargando solicitudes...</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'index.html';
+    }
+
+    // Cargar servicios
+    async function cargarServicios() {
+      try {
+        const res = await fetch('/api/servicios', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const servicios = await res.json();
+        const select = document.getElementById('id_servicio');
+        servicios.forEach(serv => {
+          const option = document.createElement('option');
+          option.value = serv.id_servicio;
+          option.textContent = serv.nombre;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Error al cargar servicios:', err);
+      }
+    }
+
+    // Cargar tatuadores
+    async function cargarTatuadores() {
+      try {
+        const res = await fetch('/api/tatuadores', {
+          headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+        const tatuadores = await res.json();
+        const select = document.getElementById('id_tatuador');
+        tatuadores.forEach(tatuador => {
+          const option = document.createElement('option');
+          option.value = tatuador.id_usuario;
+          option.textContent = tatuador.nombre_artistico || tatuador.nombre_real;
+          select.appendChild(option);
+        });
+      } catch (err) {
+        console.error('Error al cargar tatuadores:', err);
+      }
+    }
+
+    // Enviar nueva solicitud
+    document.getElementById('solicitudForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const data = {
+        id_servicio: document.getElementById('id_servicio').value || null,
+        id_tatuador: document.getElementById('id_tatuador').value || null,
+        notas_cliente: document.getElementById('descripcion').value,
+        notas_internas: `Categoría: ${document.getElementById('categoria').value} | Ubicación: ${document.getElementById('ubicacion_cuerpo').value}`,
+        estado: 'solicitud',
+        url_referencia: document.getElementById('url_referencia').value || null
+      };
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Sesión expirada. Por favor inicia sesión.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/citas', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          alert('Solicitud enviada con éxito. Te contactaremos pronto.');
+          document.getElementById('solicitudForm').reset();
+          cargarSolicitudes();
+        } else {
+          alert('Error: ' + (result.error || 'No se pudo enviar la solicitud.'));
+        }
+      } catch (err) {
+        console.error(err);
+        alert('Error de conexión.');
+      }
+    });
+
+    // Cargar solicitudes pendientes
+    async function cargarSolicitudes() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('Sesión expirada. Por favor inicia sesión.');
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/citas/mias', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || 'Error al cargar citas');
+        }
+
+        const citas = await res.json();
+        const lista = document.getElementById('listaSolicitudes');
+
+        const solicitudes = citas.filter(c => c.estado === 'solicitud');
+        if (solicitudes.length === 0) {
+          lista.innerHTML = '<p class="text-muted">No tienes solicitudes pendientes.</p>';
+          return;
+        }
+
+        lista.innerHTML = '';
+        solicitudes.forEach(c => {
+          const div = document.createElement('div');
+          div.className = 'col-md-6 col-lg-4 mb-3';
+          div.innerHTML = `
+            <div class="card">
+              <div class="card-body">
+                <h5 class="card-title">Solicitud #${c.id_cita}</h5>
+                <p class="card-text">
+                  <strong>Estado:</strong> ${c.estado}<br>
+                  <strong>Servicio:</strong> ${c.id_servicio || 'No especificado'}<br>
+                  <strong>Tatuador:</strong> ${c.id_tatuador || 'No asignado'}<br>
+                  <small class="text-muted">${c.notas_cliente || 'Sin descripción'}</small>
+                </p>
+              </div>
+            </div>
+          `;
+          lista.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById('listaSolicitudes').innerHTML = '<p class="text-danger">Error al cargar solicitudes.</p>';
+      }
+    }
+
+    window.onload = () => {
+      cargarServicios();
+      cargarTatuadores();
+      cargarSolicitudes();
+    };
+  </script>
+</body>
+</html>

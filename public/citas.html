@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Citas - SkinCodeIA</title>
+  
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Notificaciones CSS -->
+  <link href="css/notificaciones.css" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary-color: #667eea;
+      --secondary-color: #764ba2;
+      --success-color: #10b981;
+      --danger-color: #ef4444;
+      --warning-color: #f59e0b;
+      --info-color: #3b82f6;
+    }
+
+    body {
+      background-color: #f8fafc;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    }
+
+    .navbar {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .page-header {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .filters-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .table-container {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .table thead {
+      background-color: #f1f5f9;
+    }
+
+    .table thead th {
+      border-bottom: 2px solid #e2e8f0;
+      color: #475569;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+      letter-spacing: 0.05em;
+      padding: 1rem 0.75rem;
+    }
+
+    .table tbody td {
+      padding: 1rem 0.75rem;
+      vertical-align: middle;
+    }
+
+    .badge {
+      padding: 0.375rem 0.75rem;
+      font-weight: 500;
+      font-size: 0.75rem;
+    }
+
+    .badge-solicitud { background-color: #f59e0b; }
+    .badge-programada { background-color: #3b82f6; }
+    .badge-confirmada { background-color: #10b981; }
+    .badge-cancelada { background-color: #ef4444; }
+    .badge-realizada { background-color: #6366f1; }
+
+    .btn-action {
+      padding: 0.375rem 0.75rem;
+      font-size: 0.875rem;
+      margin-right: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .modal-header {
+      background: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+
+    .modal-header .btn-close {
+      filter: brightness(0) invert(1);
+    }
+
+    .form-label {
+      font-weight: 500;
+      color: #475569;
+      margin-bottom: 0.5rem;
+    }
+
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+
+    .pagination-controls {
+      background: white;
+      border-radius: 12px;
+      padding: 1rem 1.5rem;
+      margin-top: 1rem;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 3rem 1rem;
+      color: #94a3b8;
+    }
+
+    .empty-state i {
+      font-size: 4rem;
+      margin-bottom: 1rem;
+      opacity: 0.5;
+    }
+
+    .loading-spinner {
+      text-align: center;
+      padding: 3rem;
+    }
+  </style>
+
+  <script>
+    // Protección de ruta - Requiere autenticación
+    if (!localStorage.getItem('token')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+</head>
+<body>
+
+  <!-- Navbar -->
+  <nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container-fluid">
+      <a class="navbar-brand d-flex align-items-center" href="index.html">
+        <i class="bi bi-calendar-check me-2"></i>
+        <span class="fw-bold">SkinCodeIA</span>
+      </a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNav">
+        <ul class="navbar-nav ms-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="dashboard.html">
+              <i class="bi bi-speedometer2 me-1"></i>Dashboard
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link active" href="citas.html">
+              <i class="bi bi-calendar3 me-1"></i>Citas
+            </a>
+          </li>
+          <li class="nav-item">
+            <button class="btn btn-outline-light btn-sm ms-2" onclick="logout()">
+              <i class="bi bi-box-arrow-right me-1"></i>Salir
+            </button>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="container-fluid px-4 py-4">
+    
+    <!-- Page Header -->
+    <div class="page-header">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h2 class="mb-1">
+            <i class="bi bi-calendar3 me-2"></i>Gestión de Citas
+          </h2>
+          <p class="text-muted mb-0">Administra todas las citas del sistema</p>
+        </div>
+        <button class="btn btn-primary" onclick="abrirNuevaSolicitud()">
+          <i class="bi bi-plus-circle me-2"></i>Nueva Solicitud
+        </button>
+      </div>
+    </div>
+
+    <!-- Filters Card -->
+    <div class="filters-card">
+      <div class="d-flex justify-content-between align-items-center mb-3">
+        <h5 class="mb-0">
+          <i class="bi bi-funnel me-2"></i>Filtros
+        </h5>
+        <button class="btn btn-sm btn-outline-secondary" type="button" onclick="limpiarFiltros()">
+          <i class="bi bi-x-circle me-1"></i>Limpiar
+        </button>
+      </div>
+      
+      <form class="row g-3" onsubmit="return aplicarFiltros(event)">
+        <div class="col-md-3">
+          <label class="form-label">
+            <i class="bi bi-circle-fill me-1" style="font-size: 0.5rem;"></i>Estado
+          </label>
+          <select id="f_estado" class="form-select">
+            <option value="">Todos los estados</option>
+            <option value="solicitud">Solicitud</option>
+            <option value="programada">Programada</option>
+            <option value="confirmada">Confirmada</option>
+            <option value="cancelada">Cancelada</option>
+            <option value="realizada">Realizada</option>
+          </select>
+        </div>
+        
+        <div class="col-md-3">
+          <label class="form-label">
+            <i class="bi bi-tag me-1"></i>Servicio
+          </label>
+          <select id="f_servicio" class="form-select">
+            <option value="">Todos los servicios</option>
+          </select>
+        </div>
+        
+        <div class="col-md-3">
+          <label class="form-label">
+            <i class="bi bi-person me-1"></i>Tatuador
+          </label>
+          <select id="f_tatuador" class="form-select">
+            <option value="">Todos los tatuadores</option>
+          </select>
+        </div>
+        
+        <div class="col-md-3">
+          <label class="form-label">
+            <i class="bi bi-calendar-range me-1"></i>Rango de Fechas
+          </label>
+          <div class="btn-group w-100" role="group">
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filtrarHoy()">Hoy</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filtrarSemana()">Semana</button>
+            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="filtrarMes()">Mes</button>
+          </div>
+        </div>
+        
+        <div class="col-md-3">
+          <label class="form-label">Fecha Desde</label>
+          <input id="f_desde" type="date" class="form-control">
+        </div>
+        
+        <div class="col-md-3">
+          <label class="form-label">Fecha Hasta</label>
+          <input id="f_hasta" type="date" class="form-control">
+        </div>
+        
+        <div class="col-md-6 d-flex align-items-end">
+          <button class="btn btn-primary w-100" type="submit">
+            <i class="bi bi-search me-2"></i>Aplicar Filtros
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Table Container -->
+    <div class="table-container">
+      <div class="table-responsive">
+        <table class="table table-hover" id="tabla-citas">
+          <thead>
+            <tr>
+              <th style="width: 60px;">ID</th>
+              <th>Cliente</th>
+              <th>Tatuador</th>
+              <th>Servicio</th>
+              <th style="width: 120px;">Estado</th>
+              <th>Fecha Inicio</th>
+              <th>Fecha Fin</th>
+              <th style="width: 100px;">Precio</th>
+              <th style="width: 200px;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- Datos cargados dinámicamente -->
+          </tbody>
+        </table>
+        
+        <!-- Empty State -->
+        <div id="empty-state" class="empty-state d-none">
+          <i class="bi bi-calendar-x"></i>
+          <h5>No hay citas</h5>
+          <p>No se encontraron citas con los filtros seleccionados</p>
+        </div>
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="loading-spinner d-none">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="mt-2 text-muted">Cargando citas...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pagination Controls -->
+    <div class="pagination-controls">
+      <div class="d-flex justify-content-between align-items-center">
+        <div class="d-flex align-items-center">
+          <label class="form-label me-2 mb-0">Mostrar:</label>
+          <select id="page_size" class="form-select form-select-sm" style="width: auto;" onchange="cambiarTamanoPagina()">
+            <option value="10">10</option>
+            <option value="20" selected>20</option>
+            <option value="50">50</option>
+            <option value="100">100</option>
+          </select>
+          <span class="text-muted ms-3" id="total_registros">Total: 0 citas</span>
+        </div>
+        
+        <div class="btn-group">
+          <button id="btn_prev" class="btn btn-outline-secondary" onclick="paginaAnterior()">
+            <i class="bi bi-chevron-left"></i> Anterior
+          </button>
+          <button class="btn btn-outline-secondary disabled" id="page_info">Página 1</button>
+          <button id="btn_next" class="btn btn-outline-secondary" onclick="paginaSiguiente()">
+            Siguiente <i class="bi bi-chevron-right"></i>
+          </button>
+        </div>
+        
+        <button id="btn_export" class="btn btn-success" onclick="exportarCSV()">
+          <i class="bi bi-download me-2"></i>Exportar CSV
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ========== MODALES ========== -->
+
+  <!-- Modal: Nueva Solicitud -->
+  <div class="modal fade" id="modalSolicitud" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <form id="formSolicitud" onsubmit="return crearSolicitud(event)">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-plus-circle me-2"></i>Nueva Solicitud de Cita
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-tag me-1"></i>Servicio
+              </label>
+              <select id="sol_id_servicio" class="form-select">
+                <option value="">Selecciona un servicio (opcional)</option>
+              </select>
+              <small class="text-muted">Tipo de tatuaje o servicio que deseas</small>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-chat-left-text me-1"></i>Descripción del Tatuaje <span class="text-danger">*</span>
+              </label>
+              <textarea id="sol_notas_cliente" class="form-control" rows="4" required 
+                placeholder="Describe el tatuaje que deseas: estilo, tamaño, ubicación, colores, etc."></textarea>
+              <small class="text-muted">Proporciona la mayor cantidad de detalles posible</small>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-link-45deg me-1"></i>URL de Referencia
+              </label>
+              <input id="sol_url_ref" type="url" class="form-control" 
+                placeholder="https://ejemplo.com/imagen.jpg">
+              <small class="text-muted">Link a imagen de referencia (Pinterest, Instagram, etc.)</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i>Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i>Crear Solicitud
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Programar Cita -->
+  <div class="modal fade" id="modalProgramar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <form id="formProgramar" onsubmit="return programarCita(event)">
+          <div class="modal-header">
+            <h5 class="modal-title">
+              <i class="bi bi-calendar-check me-2"></i>Programar Cita
+            </h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="prog_id_cita">
+            
+            <div class="alert alert-info">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>Información:</strong> Asigna un tatuador, fecha, hora y precio para esta cita.
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-person me-1"></i>Tatuador <span class="text-danger">*</span>
+              </label>
+              <select id="prog_id_tatuador" class="form-select" required>
+                <option value="">Selecciona un tatuador</option>
+              </select>
+            </div>
+            
+            <div class="row g-3 mb-3">
+              <div class="col-md-6">
+                <label class="form-label">
+                  <i class="bi bi-calendar-event me-1"></i>Fecha y Hora de Inicio <span class="text-danger">*</span>
+                </label>
+                <input id="prog_inicio" type="datetime-local" class="form-control" required>
+              </div>
+              <div class="col-md-6">
+                <label class="form-label">
+                  <i class="bi bi-calendar-event-fill me-1"></i>Fecha y Hora de Fin <span class="text-danger">*</span>
+                </label>
+                <input id="prog_fin" type="datetime-local" class="form-control" required>
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-currency-dollar me-1"></i>Precio Estimado
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input id="prog_precio" type="number" step="0.01" min="0" class="form-control" 
+                  placeholder="0.00">
+              </div>
+              <small class="text-muted">Precio estimado del servicio</small>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-sticky me-1"></i>Notas Internas
+              </label>
+              <textarea id="prog_notas" class="form-control" rows="2" 
+                placeholder="Notas privadas sobre esta cita (opcional)"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i>Cancelar
+            </button>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-circle me-1"></i>Programar Cita
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Ver Detalle -->
+  <div class="modal fade" id="modalDetalle" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content border-0 shadow-lg">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            <i class="bi bi-eye me-2"></i>Detalle de la Cita
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <div class="col-md-3">
+              <label class="text-muted small">ID</label>
+              <div class="fw-bold" id="det_id">-</div>
+            </div>
+            <div class="col-md-3">
+              <label class="text-muted small">Estado</label>
+              <div><span id="det_estado" class="badge">-</span></div>
+            </div>
+            <div class="col-md-3">
+              <label class="text-muted small">Servicio</label>
+              <div class="fw-semibold" id="det_servicio">-</div>
+            </div>
+            <div class="col-md-3">
+              <label class="text-muted small">Precio</label>
+              <div class="fw-bold text-success" id="det_precio">-</div>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted small">Cliente</label>
+              <div class="fw-semibold" id="det_cliente">-</div>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted small">Tatuador</label>
+              <div class="fw-semibold" id="det_tatuador">-</div>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted small">Fecha Inicio</label>
+              <div id="det_inicio">-</div>
+            </div>
+            <div class="col-md-6">
+              <label class="text-muted small">Fecha Fin</label>
+              <div id="det_fin">-</div>
+            </div>
+            <div class="col-12">
+              <label class="text-muted small">Notas del Cliente</label>
+              <div class="border rounded p-2 bg-light" id="det_notas_cliente">-</div>
+            </div>
+            <div class="col-12">
+              <label class="text-muted small">Notas Internas</label>
+              <div class="border rounded p-2 bg-light" id="det_notas_internas">-</div>
+            </div>
+            <div class="col-12">
+              <label class="text-muted small">URL de Referencia</label>
+              <div><a id="det_url" href="#" target="_blank" class="text-primary">-</a></div>
+            </div>
+            <div class="col-md-4">
+              <label class="text-muted small">Estado de Pago</label>
+              <div id="det_pago_estado">-</div>
+            </div>
+            <div class="col-md-4">
+              <label class="text-muted small">Monto Pagado</label>
+              <div class="fw-bold" id="det_pago_monto">-</div>
+            </div>
+            <div class="col-md-4">
+              <label class="text-muted small">Fecha de Pago</label>
+              <div id="det_pago_fecha">-</div>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+            <i class="bi bi-x-circle me-1"></i>Cerrar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Cancelar Cita -->
+  <div class="modal fade" id="modalCancelar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <form id="formCancelar" onsubmit="return cancelarCita(event)">
+          <div class="modal-header bg-danger text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-x-circle me-2"></i>Cancelar Cita
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="cancel_id">
+            
+            <div class="alert alert-warning">
+              <i class="bi bi-exclamation-triangle me-2"></i>
+              <strong>Atención:</strong> Esta acción no se puede deshacer. La cita será marcada como cancelada.
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-chat-left-text me-1"></i>Motivo de Cancelación <span class="text-danger">*</span>
+              </label>
+              <textarea id="cancel_nota" class="form-control" rows="3" required 
+                placeholder="Explica el motivo de la cancelación..."></textarea>
+              <small class="text-muted">Esta información será visible para el equipo</small>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-arrow-left me-1"></i>Volver
+            </button>
+            <button type="submit" class="btn btn-danger">
+              <i class="bi bi-x-circle me-1"></i>Cancelar Cita
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Marcar como Realizada -->
+  <div class="modal fade" id="modalRealizar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content border-0 shadow-lg">
+        <form id="formRealizar" onsubmit="return realizarCita(event)">
+          <div class="modal-header bg-success text-white">
+            <h5 class="modal-title">
+              <i class="bi bi-check-circle me-2"></i>Marcar como Realizada
+            </h5>
+            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <input type="hidden" id="real_id">
+            
+            <div class="alert alert-success">
+              <i class="bi bi-info-circle me-2"></i>
+              <strong>Completar cita:</strong> Registra el pago y marca la cita como realizada.
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-currency-dollar me-1"></i>Monto Pagado <span class="text-danger">*</span>
+              </label>
+              <div class="input-group">
+                <span class="input-group-text">$</span>
+                <input id="real_monto" type="number" step="0.01" min="0" class="form-control" required 
+                  placeholder="0.00">
+              </div>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-calendar-event me-1"></i>Fecha y Hora de Pago
+              </label>
+              <input id="real_fecha" type="datetime-local" class="form-control">
+              <small class="text-muted">Si no se especifica, se usará la fecha actual</small>
+            </div>
+            
+            <div class="mb-3">
+              <label class="form-label">
+                <i class="bi bi-credit-card me-1"></i>Estado de Pago
+              </label>
+              <select id="real_pago_estado" class="form-select">
+                <option value="pagado">Pagado</option>
+                <option value="pendiente">Pendiente</option>
+              </select>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+              <i class="bi bi-x-circle me-1"></i>Cancelar
+            </button>
+            <button type="submit" class="btn btn-success">
+              <i class="bi bi-check-circle me-1"></i>Marcar como Realizada
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Notificaciones JS -->
+  <script src="js/notificaciones.js"></script>
+  <!-- Citas JS -->
+  <script src="js/citas.js"></script>
+  
+  <script>
+    // Función de logout
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'login.html';
+    }
+  </script>
+
+</body>
+</html>

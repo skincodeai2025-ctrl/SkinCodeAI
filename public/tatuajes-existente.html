@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Mis Tatuajes - SkincodeIA CRM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    :root { 
+      --primary: #667eea;
+      --primary-dark: #5568d3;
+      --secondary: #764ba2;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --dark: #1e293b;
+      --light: #f8fafc;
+      --border: #e2e8f0;
+    }
+    body { background: var(--light); }
+    .appbar { 
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+    .page-header {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .page-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin: 0;
+    }
+    .page-subtitle {
+      color: #64748b;
+      margin: 0.5rem 0 0;
+    }
+    .form-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      margin-bottom: 2rem;
+    }
+    .form-label {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.5rem;
+    }
+    .form-control, .form-select {
+      border-radius: 8px;
+      border: 2px solid var(--border);
+      padding: 0.625rem 1rem;
+      transition: all 0.2s;
+    }
+    .form-control:focus, .form-select:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border: none;
+      border-radius: 8px;
+      padding: 0.625rem 1.5rem;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    .btn-outline-secondary {
+      border: 2px solid var(--border);
+      border-radius: 8px;
+      padding: 0.625rem 1.5rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+    .btn-outline-secondary:hover {
+      background: #f1f5f9;
+      border-color: #cbd5e1;
+    }
+    .tattoo-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+      transition: all 0.3s;
+      height: 100%;
+    }
+    .tattoo-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 20px rgba(0,0,0,.1);
+    }
+    .tattoo-card-img {
+      width: 100%;
+      height: 200px;
+      object-fit: cover;
+      background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+    }
+    .tattoo-card-body {
+      padding: 1.25rem;
+    }
+    .tattoo-title {
+      font-size: 1.125rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 0.75rem;
+    }
+    .tattoo-info {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.5rem;
+      font-size: 0.875rem;
+      color: #64748b;
+    }
+    .tattoo-info i {
+      color: var(--primary);
+    }
+    .category-badge {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: rgba(102, 126, 234, 0.1);
+      color: var(--primary);
+      margin-top: 0.5rem;
+    }
+    .empty-state {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: white;
+      border-radius: 16px;
+      box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    }
+    .empty-state i {
+      font-size: 4rem;
+      color: #cbd5e1;
+      margin-bottom: 1rem;
+    }
+    .section-title {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--dark);
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    .section-title i {
+      color: var(--primary);
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in {
+      animation: fadeIn 0.3s ease;
+    }
+  </style>
+  <script>
+    if (!localStorage.getItem('token')) { window.location.href = 'login.html'; }
+    function logout(){ localStorage.removeItem('token'); localStorage.removeItem('role'); window.location.href='index.html'; }
+  </script>
+</head>
+<body>
+  <nav class="navbar navbar-dark appbar navbar-expand">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="dashboard.html">
+        <i class="bi bi-graph-up-arrow me-2"></i>SkincodeIA CRM
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <a href="dashboard.html" class="btn btn-outline-light btn-sm">
+          <i class="bi bi-arrow-left me-1"></i>Volver al Dashboard
+        </a>
+        <button class="btn btn-outline-light btn-sm" onclick="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i>Salir
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container py-4">
+    <!-- Page Header -->
+    <div class="page-header fade-in">
+      <div class="d-flex justify-content-between align-items-center">
+        <div>
+          <h1 class="page-title"><i class="bi bi-palette me-2"></i>Mis Tatuajes</h1>
+          <p class="page-subtitle">Registra y gestiona tu colección de tatuajes</p>
+        </div>
+        <div>
+          <button class="btn btn-primary" onclick="scrollToForm()">
+            <i class="bi bi-plus-circle me-2"></i>Registrar Nuevo
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lista de tatuajes existentes -->
+    <div class="section-title fade-in">
+      <i class="bi bi-grid-3x3-gap"></i>
+      <span>Mi Colección</span>
+      <span class="badge bg-primary ms-2" id="totalTatuajes">0</span>
+    </div>
+    <div id="listaTatuajes" class="row g-3 mb-5">
+      <div class="col-12">
+        <div class="text-center py-4">
+          <div class="spinner-border text-primary" role="status">
+            <span class="visually-hidden">Cargando...</span>
+          </div>
+          <p class="text-muted mt-2">Cargando tatuajes...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Formulario de registro -->
+    <div class="section-title fade-in" id="formSection">
+      <i class="bi bi-plus-circle"></i>
+      <span>Registrar Nuevo Tatuaje</span>
+    </div>
+    <div class="form-card fade-in">
+      <form id="tatuajeForm">
+        <div class="row g-3">
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="bi bi-pin-map me-1"></i>Ubicación en el cuerpo <span class="text-danger">*</span>
+            </label>
+            <input type="text" class="form-control" id="ubicacion_cuerpo" placeholder="Ej: Antebrazo izquierdo" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label">
+              <i class="bi bi-person me-1"></i>Nombre del tatuador
+            </label>
+            <input type="text" class="form-control" id="nombre_tatuador" placeholder="Nombre del artista">
+          </div>
+          <div class="col-12">
+            <label class="form-label">
+              <i class="bi bi-chat-left-text me-1"></i>Descripción o significado
+            </label>
+            <textarea class="form-control" id="descripcion" rows="3" placeholder="Cuéntanos sobre tu tatuaje..."></textarea>
+          </div>
+          <div class="col-md-4">
+            <label class="form-label">
+              <i class="bi bi-calendar-event me-1"></i>Fecha de realización
+            </label>
+            <input type="date" class="form-control" id="fecha_realizacion">
+          </div>
+          <div class="col-md-8">
+            <label class="form-label">
+              <i class="bi bi-image me-1"></i>URL de la imagen (opcional)
+            </label>
+            <input type="url" class="form-control" id="url_imagen" placeholder="https://ejemplo.com/mi-tatuaje.jpg">
+          </div>
+          <div class="col-12">
+            <label class="form-label">
+              <i class="bi bi-tag me-1"></i>Categoría <span class="text-danger">*</span>
+            </label>
+            <select class="form-select" id="categoria" required>
+              <option value="">Selecciona una categoría</option>
+              <option value="realista">Realista</option>
+              <option value="geométrico">Geométrico</option>
+              <option value="tribal">Tribal</option>
+              <option value="japonés">Japonés</option>
+              <option value="blackwork">Blackwork</option>
+              <option value="acuarela">Acuarela</option>
+              <option value="old school">Old School</option>
+              <option value="new school">New School</option>
+              <option value="minimalista">Minimalista</option>
+              <option value="lettering">Lettering</option>
+              <option value="otros">Otros</option>
+            </select>
+          </div>
+          <div class="col-12">
+            <div class="d-flex gap-2">
+              <button type="submit" class="btn btn-primary">
+                <i class="bi bi-check-circle me-2"></i>Guardar Tatuaje
+              </button>
+              <button type="button" class="btn btn-outline-secondary" onclick="document.getElementById('tatuajeForm').reset()">
+                <i class="bi bi-x-circle me-2"></i>Limpiar
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    function logout() {
+      localStorage.removeItem('token');
+      window.location.href = 'index.html';
+    }
+
+    function scrollToForm() {
+      document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    function formatDate(dateString) {
+      if (!dateString) return 'No especificada';
+      const date = new Date(dateString);
+      return date.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+
+    // Función para cargar los tatuajes del cliente
+    async function cargarTatuajes() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/tatuajes/mios', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!res.ok) {
+          const error = await res.json();
+          throw new Error(error.error || 'Error al cargar tatuajes');
+        }
+
+        const tatuajes = await res.json();
+        const lista = document.getElementById('listaTatuajes');
+        const totalBadge = document.getElementById('totalTatuajes');
+
+        if (totalBadge) totalBadge.textContent = tatuajes.length;
+
+        if (tatuajes.length === 0) {
+          lista.innerHTML = `
+            <div class="col-12">
+              <div class="empty-state">
+                <i class="bi bi-palette"></i>
+                <h4 class="mb-2">No tienes tatuajes registrados</h4>
+                <p class="text-muted mb-4">Comienza a construir tu colección registrando tu primer tatuaje</p>
+                <button class="btn btn-primary" onclick="scrollToForm()">
+                  <i class="bi bi-plus-circle me-2"></i>Registrar Mi Primer Tatuaje
+                </button>
+              </div>
+            </div>`;
+          return;
+        }
+
+        lista.innerHTML = '';
+
+        tatuajes.forEach((t, index) => {
+          const div = document.createElement('div');
+          div.className = 'col-md-6 col-lg-4 fade-in';
+          div.style.animationDelay = `${index * 0.1}s`;
+          div.innerHTML = `
+            <div class="tattoo-card">
+              ${t.url_imagen ? 
+                `<img src="${t.url_imagen}" class="tattoo-card-img" alt="${t.ubicacion_cuerpo}" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\'%3E%3Crect fill=\\'%23f1f5f9\\' width=\\'100\\' height=\\'100\\'/%3E%3Ctext fill=\\'%2394a3b8\\' font-family=\\'Arial\\' font-size=\\'14\\' x=\\'50%25\\' y=\\'50%25\\' text-anchor=\\'middle\\' dy=\\'.3em\\'%3ESin imagen%3C/text%3E%3C/svg%3E'">` 
+                : 
+                `<div class="tattoo-card-img d-flex align-items-center justify-content-center">
+                  <i class="bi bi-image" style="font-size: 3rem; color: #cbd5e1;"></i>
+                </div>`
+              }
+              <div class="tattoo-card-body">
+                <div class="tattoo-title">${t.ubicacion_cuerpo || 'Sin ubicación'}</div>
+                
+                ${t.descripcion ? `<p class="text-muted small mb-2">${t.descripcion}</p>` : ''}
+                
+                <div class="tattoo-info">
+                  <i class="bi bi-calendar-event"></i>
+                  <span>${formatDate(t.fecha_realizacion)}</span>
+                </div>
+                
+                ${t.nombre_tatuador ? `
+                <div class="tattoo-info">
+                  <i class="bi bi-person"></i>
+                  <span>${t.nombre_tatuador}</span>
+                </div>` : ''}
+                
+                <div class="category-badge">${t.categoria || 'Sin categoría'}</div>
+              </div>
+            </div>
+          `;
+          lista.appendChild(div);
+        });
+      } catch (err) {
+        console.error(err);
+        document.getElementById('listaTatuajes').innerHTML = `
+          <div class="col-12">
+            <div class="empty-state">
+              <i class="bi bi-exclamation-triangle text-warning"></i>
+              <h4 class="mb-2">Error al cargar tatuajes</h4>
+              <p class="text-muted mb-4">No se pudieron cargar tus tatuajes. Por favor, intenta de nuevo.</p>
+              <button class="btn btn-primary" onclick="cargarTatuajes()">
+                <i class="bi bi-arrow-clockwise me-2"></i>Reintentar
+              </button>
+            </div>
+          </div>`;
+      }
+    }
+
+    function showToast(message, type = 'success') {
+      const toastHTML = `
+        <div class="position-fixed top-0 end-0 p-3" style="z-index: 11">
+          <div class="toast show align-items-center text-white bg-${type === 'success' ? 'success' : 'danger'} border-0" role="alert">
+            <div class="d-flex">
+              <div class="toast-body">
+                <i class="bi bi-${type === 'success' ? 'check-circle' : 'exclamation-circle'} me-2"></i>
+                ${message}
+              </div>
+              <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+          </div>
+        </div>`;
+      
+      const toastContainer = document.createElement('div');
+      toastContainer.innerHTML = toastHTML;
+      document.body.appendChild(toastContainer);
+      
+      setTimeout(() => {
+        toastContainer.remove();
+      }, 3000);
+    }
+
+    // Enviar nuevo tatuaje
+    document.getElementById('tatuajeForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const btn = e.target.querySelector('button[type="submit"]');
+      const originalHTML = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Guardando...';
+
+      const data = {
+        ubicacion_cuerpo: document.getElementById('ubicacion_cuerpo').value.trim() || null,
+        nombre_tatuador: document.getElementById('nombre_tatuador').value.trim() || null,
+        descripcion: document.getElementById('descripcion').value.trim() || null,
+        fecha_realizacion: document.getElementById('fecha_realizacion').value || null,
+        url_imagen: document.getElementById('url_imagen').value.trim() || null,
+        categoria: document.getElementById('categoria').value
+      };
+
+      const token = localStorage.getItem('token');
+      if (!token) {
+        window.location.href = 'login.html';
+        return;
+      }
+
+      try {
+        const res = await fetch('/api/tatuajes', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify(data)
+        });
+
+        const result = await res.json();
+        if (res.ok) {
+          showToast('¡Tatuaje registrado exitosamente!', 'success');
+          document.getElementById('tatuajeForm').reset();
+          await cargarTatuajes();
+          
+          // Scroll suave a la lista
+          setTimeout(() => {
+            document.getElementById('listaTatuajes').scrollIntoView({ behavior: 'smooth' });
+          }, 500);
+        } else {
+          showToast(result.error || 'No se pudo guardar el tatuaje', 'error');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error de conexión con el servidor', 'error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalHTML;
+      }
+    });
+
+    // Cargar tatuajes al iniciar la página
+    window.addEventListener('DOMContentLoaded', cargarTatuajes);
+  </script>
+</body>
+</html>

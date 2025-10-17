@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Calendario - SkincodeIA CRM</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.css" rel="stylesheet">
+  <link href="css/notificaciones.css" rel="stylesheet">
+  <style>
+    * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+    body { background: #f8fafc; }
+    
+    .navbar { 
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+    }
+    
+    .page-header {
+      background: white;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,.05);
+    }
+    
+    .calendar-container {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 12px rgba(0,0,0,.08);
+    }
+    
+    /* FullCalendar customization */
+    .fc {
+      font-family: 'Inter', sans-serif;
+    }
+    
+    .fc-toolbar-title {
+      font-size: 1.5rem !important;
+      font-weight: 700 !important;
+      color: #1e293b;
+    }
+    
+    .fc-button {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+      border: none !important;
+      border-radius: 8px !important;
+      padding: 0.5rem 1rem !important;
+      font-weight: 600 !important;
+      text-transform: capitalize !important;
+    }
+    
+    .fc-button:hover {
+      opacity: 0.9 !important;
+    }
+    
+    .fc-button-active {
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4) !important;
+    }
+    
+    .fc-day-today {
+      background: rgba(102, 126, 234, 0.1) !important;
+    }
+    
+    .fc-event {
+      border: none !important;
+      border-radius: 6px !important;
+      padding: 4px 8px !important;
+      cursor: pointer !important;
+      transition: all 0.2s !important;
+    }
+    
+    .fc-event:hover {
+      transform: translateY(-2px) !important;
+      box-shadow: 0 4px 8px rgba(0,0,0,.15) !important;
+    }
+    
+    /* Estados de citas */
+    .fc-event.solicitud { background: #94a3b8 !important; }
+    .fc-event.programada { background: #3b82f6 !important; }
+    .fc-event.confirmada { background: #667eea !important; }
+    .fc-event.realizada { background: #10b981 !important; }
+    .fc-event.cancelada { background: #ef4444 !important; }
+    
+    .legend {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      padding: 1rem;
+      background: #f8fafc;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+    }
+    
+    .legend-color {
+      width: 16px;
+      height: 16px;
+      border-radius: 4px;
+    }
+    
+    .stats-card {
+      background: white;
+      border-radius: 12px;
+      padding: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,.08);
+      margin-bottom: 1.5rem;
+    }
+    
+    .stats-card h6 {
+      color: #64748b;
+      font-size: 0.875rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stats-card .value {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+    
+    .quick-actions {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+    
+    .fc-daygrid-event-dot {
+      display: none !important;
+    }
+    
+    /* Modal customization */
+    .modal-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 12px 12px 0 0;
+    }
+    
+    .modal-header .btn-close {
+      filter: brightness(0) invert(1);
+    }
+    
+    .badge-status {
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.75rem;
+    }
+  </style>
+  <script>
+    if (!localStorage.getItem('token')) { window.location.href = 'login.html'; }
+    function logout(){ localStorage.removeItem('token'); localStorage.removeItem('role'); window.location.href='index.html'; }
+  </script>
+</head>
+<body>
+  <nav class="navbar navbar-dark navbar-expand">
+    <div class="container-fluid">
+      <a class="navbar-brand fw-bold" href="dashboard.html">
+        <i class="bi bi-graph-up-arrow me-2"></i>SkincodeIA CRM
+      </a>
+      <div class="d-flex align-items-center gap-3">
+        <a href="dashboard.html" class="btn btn-sm btn-outline-light">
+          <i class="bi bi-house"></i> Dashboard
+        </a>
+        <a href="citas.html" class="btn btn-sm btn-outline-light">
+          <i class="bi bi-list"></i> Lista
+        </a>
+        <button class="btn btn-outline-light btn-sm" onclick="logout()">
+          <i class="bi bi-box-arrow-right me-1"></i>Salir
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="page-header">
+    <div class="container">
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <div>
+          <h2 class="mb-1"><i class="bi bi-calendar3 me-2"></i>Mi Calendario</h2>
+          <p class="text-muted mb-0">Gestiona tu agenda de forma visual</p>
+        </div>
+        <div class="quick-actions">
+          <button class="btn btn-primary" onclick="openNewAppointmentModal()">
+            <i class="bi bi-plus-circle me-2"></i>Nueva Cita
+          </button>
+          <button class="btn btn-outline-primary" onclick="refreshCalendar()">
+            <i class="bi bi-arrow-clockwise me-2"></i>Actualizar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="container pb-5">
+    <div class="row">
+      <div class="col-lg-9">
+        <!-- Leyenda -->
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-color" style="background: #94a3b8;"></div>
+            <span>Solicitud</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #3b82f6;"></div>
+            <span>Programada</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #667eea;"></div>
+            <span>Confirmada</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #10b981;"></div>
+            <span>Realizada</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-color" style="background: #ef4444;"></div>
+            <span>Cancelada</span>
+          </div>
+        </div>
+
+        <!-- Calendario -->
+        <div class="calendar-container">
+          <div id="calendar"></div>
+        </div>
+      </div>
+
+      <div class="col-lg-3">
+        <!-- Estadísticas -->
+        <div class="stats-card">
+          <h6>Citas Este Mes</h6>
+          <div class="value" id="statsMes">0</div>
+        </div>
+
+        <div class="stats-card">
+          <h6>Citas Esta Semana</h6>
+          <div class="value" id="statsSemana">0</div>
+        </div>
+
+        <div class="stats-card">
+          <h6>Citas Hoy</h6>
+          <div class="value" id="statsHoy">0</div>
+        </div>
+
+        <div class="stats-card">
+          <h6>Pendientes</h6>
+          <div class="value text-warning" id="statsPendientes">0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Detalle de Cita -->
+  <div class="modal fade" id="modalDetalle" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-calendar-check me-2"></i>Detalle de la Cita</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body" id="modalDetalleBody">
+          <div class="text-center py-4">
+            <div class="spinner-border text-primary" role="status"></div>
+          </div>
+        </div>
+        <div class="modal-footer" id="modalDetalleFooter">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Nueva Cita -->
+  <div class="modal fade" id="modalNuevaCita" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Nueva Cita</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <form id="formNuevaCita">
+          <div class="modal-body">
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Cliente</label>
+              <select class="form-select" id="clienteSelect" required>
+                <option value="">Seleccionar cliente...</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Servicio</label>
+              <select class="form-select" id="servicioSelect" required>
+                <option value="">Seleccionar servicio...</option>
+              </select>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Fecha y Hora Inicio</label>
+              <input type="datetime-local" class="form-control" id="fechaInicio" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Fecha y Hora Fin</label>
+              <input type="datetime-local" class="form-control" id="fechaFin" required>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Precio (opcional)</label>
+              <input type="number" class="form-control" id="precio" placeholder="0">
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-semibold">Notas</label>
+              <textarea class="form-control" id="notas" rows="3"></textarea>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="submit" class="btn btn-primary">
+              <i class="bi bi-check-circle me-2"></i>Crear Cita
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/index.global.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.10/locales/es.global.min.js"></script>
+  <script src="js/notificaciones.js"></script>
+  <script src="js/calendario.js"></script>
+</body>
+</html>
